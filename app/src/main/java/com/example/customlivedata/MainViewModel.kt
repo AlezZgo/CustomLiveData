@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    val event = MutableLiveData<Boolean>(false)
+    val event = SingleLiveEvent<Boolean>()
 
     fun trigger(){
         viewModelScope.launch {
