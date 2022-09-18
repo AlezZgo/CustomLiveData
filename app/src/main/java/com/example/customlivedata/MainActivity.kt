@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,10 +24,15 @@ class MainActivity : AppCompatActivity() {
             viewModel.trigger()
         }
 
-        viewModel.event.observe(this){
-            if(it)
-                Snackbar.make(findViewById(R.id.activity_layout),"Hello there",Snackbar.LENGTH_LONG).show()
+        lifecycleScope.launchWhenStarted {
+            viewModel.eventFlow.collect {
+                it.show { mes->
+                    Snackbar.make(findViewById(R.id.activity_layout),mes,Snackbar.LENGTH_LONG).show()
+                }
+            }
         }
+
+
 
     }
 }
